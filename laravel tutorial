@@ -1,3 +1,22 @@
+1)create laravel project 
+composer create-project laravel/laravel todolist
+2)set a public website 
+go to C:\xampp\apache\conf\extra 
+->open this file httpd-vhosts
+->create an host at the below for example
+change the root address and website name then save 
+<VirtualHost *:80>
+    DocumentRoot "C:/xampp/htdocs/todolist/public/"
+    ServerName todolist.dev
+</VirtualHost> 
+->then open Notepad run as administrator
+open file C:\Windows\System32\drivers\etc
+ select to all file 
+ open hosts
+ at the last 
+ set
+ 127.0.0.1 todolist.dev
+then save
 )makke controller
 php artisan make:controller MessagesController
 
@@ -158,3 +177,57 @@ app/Provider AppServiseProvider
     {
         Schema::defaultStringLength(191);
     }
+)create a resource all crud function will auto create in controller
+php artisan make:controller TodosController --resource
+->Route will take care of all 
+Route::resource('todo', 'TodosController');
+)use tinker when you working in database
+it is a commend line test editor
+to open this
+php artisan tinker
+for example
+>>> $var=new App\Todo();
+=> App\Todo {#3015}
+>>> $var->text='shopping 3';
+=> "shopping 3"
+>>> $var->body='buy laptop';
+=> "buy laptop"
+>>> $var->due='buy wednesday 4 jan';
+=> "buy wednesday 4 jan"
+>>> $var->save();
+=> true
+>>> $var->all();
+exit 
+))
+//how to show data of a variable 
+       printf($todos);
+       echo $todos;
+       return $todos;
+       var_dump($todos);
+       
+))//query of databse get data from the latest order or manner
+  public function index()
+    {
+      // $todos= Todo::all();
+      $todos= Todo::orderBy('created_at','desc')->get();
+       return view('todos.indax')->with('todos',$todos);
+       //printf($todos);
+       //echo $todos;
+       //return $todos;
+       //var_dump($todos);
+    }
+//show a single data
+    public function show($id)
+    {
+     // return $id;
+     //query for find by id
+     $todo=Todo::find($id);
+     return view('todos.show')->with('todo',$todo);
+   //  return $todo->text;
+    }
+//show data
+@extends('layout.app')
+@section('content')
+<a href="/">Back</a>
+<h1>{{$todo->text}}</h1>
+@endsection
