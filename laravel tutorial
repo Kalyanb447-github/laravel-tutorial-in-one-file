@@ -1,0 +1,160 @@
+)makke controller
+php artisan make:controller MessagesController
+
+)make model
+php artisan make:model Message
+//make model with migration
+php artisan make:model Message -m
+1)form in laravel
+<div class="container">
+    {{Form::open(['url' => 'contact/submit', 'method' => 'post']) }}
+
+   <div class="form-group">
+        {{ Form::label('name','name', ['class' => 'control-label']) }}
+        {{ Form::text('name','', array_merge(['class' => 'form-control'])) }}
+    </div>
+    <div class="form-group">
+            {{ Form::label('email', 'email', ['class' => 'control-label']) }}
+            {{ Form::email('email','', array_merge(['class' => 'form-control'])) }}
+    </div>
+    <div class="form-group">
+                {{ Form::label('message', 'message', ['class' => 'control-label']) }}
+                {{ Form::textarea('message','', array_merge(['class' => 'form-control'])) }}
+    </div>
+    {{Form::submit('Click Me!',['class' => 'btn btn-primary'])}}
+    {!! Form::close() !!}
+      </div>
+      
+2)validation 
+//controller
+  public function submit(Request $request){
+        // return $request->input('name');
+        $this->validate($request,
+        [
+            'name'=>'required',
+            'email'=>'required',
+        ]
+
+        );
+        return 'validarion successfull';
+    }
+//show erroe
+//in app.blade.php
+    <div class="row">
+        <div class="col-md-8 col-lg-8">
+           @if (count($errors) > 0)
+               @foreach ($errors->all() as $error)
+                   <div class="alert alert-danger">
+                       {{$error}}
+                   </div>
+               @endforeach
+           @endif
+            @yield('contant')
+        </div>
+        <div class="col-md-4 col-lg-4">
+            @include('inc.sidebar')
+        </div>
+    </div>
+</div>
+
+)Migration create table
+//cmd
+
+php artisan make:model Message -m
+//goto Database\Migrations name of your migration file
+   //call up() create table  
+    public function up()
+    {
+        //create a teble masseges 
+        //id fields are 
+        Schema::create('masseges', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->string('email');
+            $table->mediumText('message');
+            $table->timestamps();
+        });
+    }
+    
+  //send data to database
+  public function submit(Request $request){
+        // return $request->input('name');
+        $this->validate($request,
+        [
+            'name'=>'required',
+            'email'=>'required',
+        ]
+
+        );
+
+        //create a new message
+        //create an object of Massage model class
+         $message=new Massege;
+         //asaign the value database
+         $message->name=$request->input('name');
+         $message->email=$request->input('email');
+         $message->messages=$request->input('message');
+
+         //save message
+         $message->save();
+
+         //redirect to another page
+         //with functon can give acces to the message
+         return Redirect('/')->with('success','Message send');
+
+        //return 'validarion successfull';
+    }
+//get data from database in function
+route
+Route::get('/messages','MessagesController@getMEssages');
+
+    //get data from database
+    public function getMEssages(){
+       //get all meaasges from the table
+       $messages = Massege::all();
+       //send the data to another page
+       return view('messages')->with('messages',$messages);
+    }
+//print all message
+    @section('contant')
+<h1>Messages</h1>
+ @if (count($messages) >0 )
+  @foreach ( $messages as $message)
+      <ul class="list-group">
+          <li class="list-group-item">
+              Name : {{$message->name}}
+          </li>
+          <li class="list-group-item">
+                Email : {{$message->email}}
+          </li>
+            <li class="list-group-item">
+                 Message : {{$message->messages}}
+            </li>
+      </ul>
+      <br>
+
+  @endforeach
+ @endif
+@endsection
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+
+         //call down() delete table  
+    public function down()
+    {
+        Schema::dropIfExists('masseges');
+    }
+//if error goto 
+app/Provider AppServiseProvider 
+ change the boot() to
+ //import 
+ use Illuminate\Support\Facades\Schema;
+
+   public function boot()
+    {
+        Schema::defaultStringLength(191);
+    }
