@@ -236,10 +236,13 @@ exit
 step 1
       <form action="{{ route('todo.destroy',  $todo->id) }}" method="POST">
         {{ method_field('DELETE') }}
-        {{ csrf_field() }}
+        {{ csrf_field() }}        
         <button class="btn btn-danger">Delete</button>
+          </form>
   //step two for controler
        $todo=Todo::find($id);
        $todo->delete();
         return redirect('/')->with('success','Deleted successfully');       
-  </form>
+
+//find logged in  user
+$user_id= auth()->user()->id;
