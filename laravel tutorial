@@ -231,3 +231,15 @@ exit
 <a href="/">Back</a>
 <h1>{{$todo->text}}</h1>
 @endsection
+
+//Delete 
+step 1
+      <form action="{{ route('todo.destroy',  $todo->id) }}" method="POST">
+        {{ method_field('DELETE') }}
+        {{ csrf_field() }}
+        <button class="btn btn-danger">Delete</button>
+  //step two for controler
+       $todo=Todo::find($id);
+       $todo->delete();
+        return redirect('/')->with('success','Deleted successfully');       
+  </form>
